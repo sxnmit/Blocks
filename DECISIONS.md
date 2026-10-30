@@ -1,34 +1,44 @@
 # Product decisions
 
-Log of what we've settled and what's still a proposal. Newest at the bottom of each section. If something changes, edit the line and note the date instead of deleting it.
+Log of what we've settled and what's still a proposal. If something changes, edit the line and note the date instead of deleting it.
 
 ## Decided (Sunny)
 
-2026-10-30
-- **Product:** a drag and drop canvas for planning and building software, mainly SaaS. You lay out the architecture visually instead of stacking code by hand, like Scratch blocks but for real services.
-- **Presets:** ship with sensible default blocks. Payment gateways, email, and other common workflows first.
-- **No lock-in:** the canvas generates a real GitHub repo. Users keep coding in it. Custom logic is theirs to write in GitHub, and agents help with custom logic on a best-effort basis.
-- **Round-tripping:** a webhook on the repo fires on every push. An agent reads the diff and proposes changes to the architecture on the canvas.
-- **Traceability:** every proposed canvas change links to the commit that caused it and gives a reason.
+2026-10-30, direction change
+- **Core problem:** AI writes more and more of the code, and the humans who own it lose track of what was built. The product helps people remember what their codebase contains and why it changed. That the market for this is big is Sunny's belief, not something we've verified.
+- **The core is the commit-linked loop:** a webhook fires on every push, an agent reads the diff and proposes updates to the architecture, and each proposal links to the commit that caused it with a reason.
+- **The canvas and code generation are on hold.** They come back later only if the loop proves itself. They were the weakest part of the idea, because AI coding tools already scaffold apps from a prompt.
+
+2026-10-30, still true from before
 - **Audience:** small scale. Fast builders, solo founders, tiny teams. Not enterprise.
-- **Pricing shape:** tiered subscriptions. Higher tiers get more usage and more projects. A free demo tier exists.
+- **Pricing shape:** tiered subscriptions. Higher tiers get more usage and more projects. A free tier exists.
+- **No lock-in:** everything lives in the user's own GitHub repo.
+
+Superseded as the core (kept for history): a drag and drop canvas that generates a GitHub repo from preset blocks like payments and email.
 
 ## Proposed (Claude's suggestions, not confirmed yet)
 
 2026-10-30
-- **Meter on usage, not project count:** analyzed commits per month tracks the real cost (LLM diff analysis). Project caps stay as a secondary upsell lever.
-- **Free tier as a small permanent allowance** instead of a time-limited demo: for example 1 project and a few dozen analyzed commits a month. Keep canvas and code generation generous, gate analysis volume.
-- **Proposals are never applied silently:** the user accepts or dismisses each one. This is how we keep canvas and repo from drifting apart.
-- **v1 scope:** fixed blocks (app, database, auth, Stripe, email), one stack (Next.js + Postgres), one commit analysis loop. See ROADMAP.md.
-- **Early risk to test:** the agent flagging noise. Build a labeled set of about 20 real diffs and score the agent before building the proposal UI.
-- **Success measure for v1:** most testers still have the repo connected after a week, and they accept more than half of the proposals.
-- **Test with five solo builders** at the end of the first build.
+- **Test before building:** ship only the GitHub app first. It comments on pushes with what changed architecturally and why. Install it on five builders' real repos.
+- **Proposals are never applied silently:** the user accepts or dismisses each one. This is how we keep the architecture record from drifting away from the code.
+- **Early risk to test:** the agent flagging noise. Build a labeled set of about 20 real diffs and score the agent before polishing anything.
+- **Success measure:** testers keep the app installed after a week, they act on more than half of the proposals, and at least 3 of 5 say they'd miss it if it went away.
+- **Meter on usage, not project count:** analyzed commits per month tracks the real cost. Project caps stay a secondary lever.
+- **Free tier as a small permanent allowance** instead of a time-limited demo. Gate analysis volume, not the basics.
+
+## Landscape (checked 2026-10-30, one page per tool, so shallow)
+
+- The problem is widely discussed as "comprehension debt". A Faros article on it cites an Anthropic study where heavy AI users scored 17% lower on comprehension tests, and Faros data showing bigger PRs and more unreviewed merges with heavy AI use.
+- **Archyl:** generates C4 architecture diagrams from a codebase, detects drift between docs and code, stores architecture as YAML in Git. Freemium. Aimed at architects and teams.
+- **DeepWiki:** auto-generated wiki per repo with citations pinned to a commit. Looks like a snapshot you refresh by hand.
+- Several small open source doc generators also show up in search.
+- Not checked: pricing, and whether any tool already explains each push with a reason the way we plan to.
+- The gap we're betting on: a per-commit, reason-linked, accept or dismiss record for people whose code is mostly written by AI, living in the GitHub workflow.
 
 ## Open questions
 
-- Product name.
-- Final v1 stack. Next.js + Postgres is a placeholder.
+- Where the output lives: PR or push comments, a file in the repo, a hosted page, or all three.
+- How we differ from Archyl and DeepWiki in one sentence.
+- Product name. "Blocks" was for the canvas.
 - Pricing numbers and tier names.
-- Direction of edits: once the repo exists, can the user also change the canvas and have it update the code? Not discussed yet.
-- Where the generated app gets deployed, if anywhere, in v1.
-- Whether the product takes a cut of payments that flow through the stack it sets up (floated as an option, not decided).
+- Whether the canvas comes back later as a view over the same data.
