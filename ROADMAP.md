@@ -60,5 +60,5 @@ Using [wshobson/agents](https://github.com/wshobson/agents). It has 92 local plu
 
 ## Working in this fork
 
-- Keep upstream as `origin` so we can pull updates. Our product docs (this file and DECISIONS.md) live at the repo root.
+- `origin` is this fork (sxnmit/Blocks). The original repo is the `upstream` remote, so we can pull its updates when we want them. Our product docs (this file and DECISIONS.md) live at the repo root.
 - Before pushing source changes, the repo's own gates are `make validate STRICT=1`, `make garden`, `make test`. They aren't needed for doc-only changes.
